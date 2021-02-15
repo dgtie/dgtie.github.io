@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+  <style>
+    body {
+      background-color: lightyellow;
+    }
+    * { font-size: 75px; }
+    button {
+      font-size: 50px;
+      padding: 15px 32px;
+    }
+    .label {
+      font-size: 50px;
+      margin: 10px;
+      padding: 10px;
+    }
+    textarea { font-size: 20px; }
+    input[type="checkbox"] {
+      width: 50px;
+      height: 50px;
+    }
+  </style>
+  <script src="wifigyro.js"></script>
+  <script>
+    function mpuData(evtdata) { 
+      var data = new Uint8Array(evtdata);
+      var line;
+      var temp, sn, ax, ay, az, gx, gy, gz;
+      var cb = document.querySelector('#log');
+      sn = (data[0] + 8) % 256;
+      if (document.querySelector('#read').disabled == true)
+        ws.send("\n" + sn.toString(16));
+      else document.querySelector('#ta').value = buffer;
+      for (line = 0; line < 8; line++) {
+        temp = toInt(data[line*14+7], data[line*14+8]);
+        temp = (36.53 + temp/340).toPrecision(6);
+        sn = (data[0] + line) % 256;
+        ax = toInt(data[line*14+1], data[line*14+2]);
+        ay = toInt(data[line*14+3], data[line*14+4]);
+        az = toInt(data[line*14+5], data[line*14+6]);
+        gx = toInt(data[line*14+9], data[line*14+10]);
+        gy = toInt(data[line*14+11], data[line*14+12]);
+        gz = toInt(data[line*14+13], data[line*14+14]);
+        if (cb.checked == true)
+          buffer += sn + "," + ax + "," + ay + "," + az + "," +
+                    temp + "," + gx + "," + gy + "," + gz + "\r\n";
+      }
+      document.querySelector('#sn').value = sn;
+      document.querySelector('#tp').value = temp;
+      document.querySelector('#ax').value = ax;
+      document.querySelector('#ay').value = ay;
+      document.querySelector('#az').value = az;
+      document.querySelector('#gx').value = gx;
+      document.querySelector('#gy').value = gy;
+      document.querySelector('#gz').value = gz;
+      if (document.querySelector('#read').disabled == false)
+        document.querySelector('#ta').value = buffer;
+    }
+  </script>
+</head>
+<body>
+  <center>
+  <p>WiFi+Gyroscope</p>
+  <input id="host" value="192.168.50.236" />
+  <input id="port" value="3333" />
+  <button id="connect" type="button" onclick='ws_conn()'> Connect </button>
+  <button id="disconn" type="button" disabled onclick='ws.send("")'>
+    Disconnect
+  </button>
+  <input id="ssid" disabled value="SSID" />
+  <input id="pwd" disabled value="PASSWORD" />
+  <button id="wifi" type="button" disabled onclick='save_wifi()'>
+    Set WIFI info
+  </button>
+  <br/>
+  <input class="label" size=30 id="receive" disabled
+    value="Message from server"/>
+  <input id="string" disabled value="Message to server" />
+  <button id="send" type="button" disabled onclick='ws_send()'>
+     Echo Message
+  </button>
+  <br/>
+  <input id='sn' class="label" size=3 disabled value='S/N' />
+  <input id='tp' class="label" size=20 disabled value=Temperature />
+  <input id='ax' class="label" size=12 disabled value='AX' />
+  <input id='gx' class="label" size=12 disabled value='GX' />
+  <input id='ay' class="label" size=12 disabled value='AY' />
+  <input id='gy' class="label" size=12 disabled value='GY' />
+  <input id='az' class="label" size=12 disabled value='AZ' />
+  <input id='gz' class="label" size=12 disabled value='GZ' />
+  <br/>
+  <button id="read" type="button" disabled onclick='ws.send("\n100")'>
+    Read Single
+  </button>
+  <button id="read1" type="button" disabled onclick='toggle_read()'>
+    Continuous
+  </button>
+  <br/>
+  <input type="checkbox" id="log">log</input>
+  <br/>
+  <textarea id="ta" name="text" rows="12" cols="75" disabled> </textarea>
+  <button type="button" onclick='download()'>
+     Save to file
+  </button>
+  <button type="button" onclick="clear_ta()"> Clear </button>
+  <input id="fn" type="text" name="name" value="log.txt"/>
+  </center>
+</body>
+</html>
