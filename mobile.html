@@ -164,7 +164,7 @@
   <input id="host" value="192.168.50.236" />
   <input id="port" value="3333" />
   <button id="connect" type="button" onclick='ws_conn()'> Connect </button>
-  <button id="disconn" type="button" disabled onclick='ws.send("")'>
+  <button id="disconn" type="button" disabled onclick='ws.close()'>
     Disconnect
   </button>
   <input id="ssid" disabled value="SSID" />
