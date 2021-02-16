@@ -1,0 +1,209 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+  <style>
+    body {
+      background-color: lightyellow;
+    }
+    * { font-size: 75px; }
+    button {
+      font-size: 50px;
+      padding: 15px 32px;
+    }
+    .label {
+      font-size: 50px;
+      margin: 10px;
+      padding: 10px;
+    }
+    textarea { font-size: 20px; }
+    input[type="checkbox"] {
+      width: 50px;
+      height: 50px;
+    }
+  </style>
+  <script>
+    function toInt(hi, lo) {
+       var i = lo + hi*256;
+       if (i > 32767) i -= 65536;
+       return i;
+    }
+
+    var ws, buffer = "";
+
+    function ws_conn() {
+      
+       // Let us open a web socket
+       var server = "ws://" + document.querySelector('#host').value +
+                    ":" + document.querySelector('#port').value;
+       ws = new WebSocket(server);
+       ws.binaryType = 'arraybuffer';
+
+       ws.onopen = function() {
+          document.querySelector('#connect').disabled = true;
+          document.querySelector('#disconn').disabled = false;
+          document.querySelector('#read').disabled = false;
+          document.querySelector('#read1').disabled = false;
+          document.querySelector('#host').disabled = true;
+          document.querySelector('#port').disabled = true;
+          document.querySelector('#send').disabled = false;
+          document.querySelector('#string').disabled = false;
+          document.querySelector('#wifi').disabled = false;
+          document.querySelector('#ssid').disabled = false;
+          document.querySelector('#pwd').disabled = false;
+       };
+
+       ws.onmessage = function (evt) {
+          if (evt.data instanceof ArrayBuffer) mpuData(evt.data);
+          else document.querySelector('#receive').value = evt.data;
+       };
+				
+       ws.onclose = function() { 
+          document.querySelector('#connect').disabled = false;
+          document.querySelector('#disconn').disabled = true;
+          document.querySelector('#read').disabled = true;
+          document.querySelector('#read1').disabled = true;
+          document.querySelector('#read1').innerHTML = "Continuous";
+          document.querySelector('#host').disabled = false;
+          document.querySelector('#port').disabled = false;
+          document.querySelector('#send').disabled = true;
+          document.querySelector('#string').disabled = true;
+          document.querySelector('#wifi').disabled = true;
+          document.querySelector('#ssid').disabled = true;
+          document.querySelector('#pwd').disabled = true;
+       };
+
+    }
+
+    function ws_send() {
+      var str = document.querySelector('#string').value;
+      if (str !== "") ws.send(str);
+    }
+
+    function toggle_read() {
+       var str = document.querySelector('#read1').innerHTML;
+       if (str === 'Stop Reading') {
+          document.querySelector('#read1').innerHTML = "Continuous";
+          document.querySelector('#read').disabled = false;
+       } else {
+          document.querySelector('#read1').innerHTML = "Stop Reading";
+          document.querySelector('#read').disabled = true;
+          buffer = "";
+          ws.send("\n100");
+       }
+    }
+
+    function save_wifi() {
+       var ssid = document.querySelector('#ssid').value;
+       var pwd = document.querySelector('#pwd').value;
+       if (ssid === "") return;
+       if (pwd === "") return;
+       document.querySelector('#ssid').value = "SSID";
+       document.querySelector('#pwd').value = "PASSWORD";
+       ws.send("\007" + ssid + "," + pwd);	// \007 = bell = \a in c
+    }
+
+    function download() {
+      var filename = document.querySelector('#fn').value;
+      var text = document.querySelector('#ta').value;
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' +
+        encodeURIComponent(text));
+      element.setAttribute('download', filename);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
+
+    function clear_ta() {
+      buffer = "";
+      document.querySelector('#ta').value = buffer;
+    }
+  </script>
+  <script>
+    function mpuData(evtdata) { 
+      var data = new Uint8Array(evtdata);
+      var line;
+      var temp, sn, ax, ay, az, gx, gy, gz;
+      var cb = document.querySelector('#log');
+      sn = (data[0] + 8) % 256;
+      if (document.querySelector('#read').disabled == true)
+        ws.send("\n" + sn.toString(16));
+      else document.querySelector('#ta').value = buffer;
+      for (line = 0; line < 8; line++) {
+        temp = toInt(data[line*14+7], data[line*14+8]);
+        temp = (36.53 + temp/340).toPrecision(6);
+        sn = (data[0] + line) % 256;
+        ax = toInt(data[line*14+1], data[line*14+2]);
+        ay = toInt(data[line*14+3], data[line*14+4]);
+        az = toInt(data[line*14+5], data[line*14+6]);
+        gx = toInt(data[line*14+9], data[line*14+10]);
+        gy = toInt(data[line*14+11], data[line*14+12]);
+        gz = toInt(data[line*14+13], data[line*14+14]);
+        if (cb.checked == true)
+          buffer += sn + "," + ax + "," + ay + "," + az + "," +
+                    temp + "," + gx + "," + gy + "," + gz + "\r\n";
+      }
+      document.querySelector('#sn').value = sn;
+      document.querySelector('#tp').value = temp;
+      document.querySelector('#ax').value = ax;
+      document.querySelector('#ay').value = ay;
+      document.querySelector('#az').value = az;
+      document.querySelector('#gx').value = gx;
+      document.querySelector('#gy').value = gy;
+      document.querySelector('#gz').value = gz;
+      if (document.querySelector('#read').disabled == false)
+        document.querySelector('#ta').value = buffer;
+    }
+  </script>
+</head>
+<body>
+  <center>
+  <p>WiFi+Gyroscope</p>
+  <input id="host" value="192.168.50.236" />
+  <input id="port" value="3333" />
+  <button id="connect" type="button" onclick='ws_conn()'> Connect </button>
+  <button id="disconn" type="button" disabled onclick='ws.send("")'>
+    Disconnect
+  </button>
+  <input id="ssid" disabled value="SSID" />
+  <input id="pwd" disabled value="PASSWORD" />
+  <button id="wifi" type="button" disabled onclick='save_wifi()'>
+    Set WIFI info
+  </button>
+  <br/>
+  <input class="label" size=30 id="receive" disabled
+    value="Message from server"/>
+  <input id="string" disabled value="Message to server" />
+  <button id="send" type="button" disabled onclick='ws_send()'>
+     Echo Message
+  </button>
+  <br/>
+  <input id='sn' class="label" size=3 disabled value='S/N' />
+  <input id='tp' class="label" size=20 disabled value=Temperature />
+  <input id='ax' class="label" size=12 disabled value='AX' />
+  <input id='gx' class="label" size=12 disabled value='GX' />
+  <input id='ay' class="label" size=12 disabled value='AY' />
+  <input id='gy' class="label" size=12 disabled value='GY' />
+  <input id='az' class="label" size=12 disabled value='AZ' />
+  <input id='gz' class="label" size=12 disabled value='GZ' />
+  <br/>
+  <button id="read" type="button" disabled onclick='ws.send("\n100")'>
+    Read Single
+  </button>
+  <button id="read1" type="button" disabled onclick='toggle_read()'>
+    Continuous
+  </button>
+  <br/>
+  <input type="checkbox" id="log">log</input>
+  <br/>
+  <textarea id="ta" name="text" rows="12" cols="75" disabled> </textarea>
+  <button type="button" onclick='download()'>
+     Save to file
+  </button>
+  <button type="button" onclick="clear_ta()"> Clear </button>
+  <input id="fn" type="text" name="name" value="log.txt"/>
+  </center>
+</body>
+</html>
