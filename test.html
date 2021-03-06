@@ -25,7 +25,7 @@
   <video autoplay="true" id="video" ></video>
   <button id="snap" style='font-size:40px;width:900px;height:100px'>Capture</button>
   <!-- Webcam video snapshot -->
-  <canvas id="canvas" width="700px" height="900px"></canvas>
+  <canvas id="canvas" ></canvas>
 
   <img src="images/banner.png" id="banner"></img>
   <script>
@@ -83,6 +83,8 @@ if (navigator.mediaDevices.getUserMedia) {
 // Draw image
 var context = canvas.getContext('2d');
 snap.addEventListener("click", function() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0);
 });
 
