@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <title>dgtie</title>
+  <style>
+    body { background-color: powderblue; width: 960px; }
+    h1 { font-size: 80px; }
+    h2 { font-size: 70px; }
+    h3 { font-size: 60px; }
+    h4 { font-size: 50px; }
+    h5 { font-size: 40px; }
+    h6, p, pre { font-size: 30px; }
+    .touch {
+      width: 300px;
+      height: 300px;
+      background-color: yellow;
+      display: inline-block;
+      touch-action: none;
+    }
+  </style>
+<head>
+</head>
+<body>
+  <h1>DGTIE</h1>
+  <hr>
+  <video autoplay="true" id="video" style='width:900px;height:500px'></video>
+  <button id="snap" style='font-size:40px;width:900px;height:100px'>Capture</button>
+  <!-- Webcam video snapshot -->
+  <canvas id="canvas" width="900px" height="500px"></canvas>
+
+  <img src="images/banner.png" id="banner"></img>
+  <script>
+    let img = document.querySelector('#banner');
+    img.addEventListener('mousedown', (e) => {
+      document.querySelector('#msg').innerHTML = "mousedown";
+    });
+    img.addEventListener('touchmove', (e) => {
+      document.querySelector('#msg').innerHTML = "touchmove";
+    });
+    img.addEventListener('mouseup', (e) => {
+      document.querySelector('#msg').innerHTML = "mouseup";
+    });
+  </script>
+  <h2 id="msg">This is a Heading h2</h2>
+  <div class="touch" value='1'></div>
+  <div class="touch" value=2></div>
+  <div class="touch" value=3></div>
+  <div class="touch" value=4></div>
+  <div class="touch" value=5></div>
+  <div class="touch" value=6></div>
+  <div class="touch" value=7></div>
+  <div class="touch" value=8></div>
+  <div class="touch" value=9></div>
+  <script>
+    let x, i;
+    x = document.querySelectorAll(".touch");
+    for (i = 0; i < x.length; i++)
+      x[i].addEventListener('touchstart', (e) => {
+        document.querySelector('#msg').innerHTML = e.target.attributes.value.value;
+      });
+  </script>
+  <h3>This is a Heading h3</h3>
+  <h4>This is a Heading h4</h4>
+  <h5>This is a Heading h5</h5>
+  <h6>This is a Heading h6</h6>
+  <p>This is a paragraph.</p>
+  <pre>preformatted text</pre>
+  <script>
+    var video = document.querySelector("#video");
+    const canvas = document.getElementById('canvas');
+    const snap = document.getElementById("snap");
+
+
+if (navigator.mediaDevices.getUserMedia) {
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function (stream) {
+      video.srcObject = stream;
+    })
+    .catch(function (err0r) {
+      console.log("Something went wrong!");
+    });
+}
+
+// Draw image
+var context = canvas.getContext('2d');
+snap.addEventListener("click", function() {
+    context.drawImage(video, 0, 0, 500, 375);
+});
+
+
+  </script>
+</body>
+</html>
