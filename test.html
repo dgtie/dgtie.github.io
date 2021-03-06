@@ -25,7 +25,7 @@
   <video autoplay="true" id="video" ></video>
   <button id="snap" style='font-size:40px;width:900px;height:100px'>Capture</button>
   <!-- Webcam video snapshot -->
-  <canvas id="canvas" width="900px" height="500px"></canvas>
+  <canvas id="canvas" width="900px" height="1500px"></canvas>
 
   <img src="images/banner.png" id="banner"></img>
   <script>
@@ -71,7 +71,7 @@
 
 
 if (navigator.mediaDevices.getUserMedia) {
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }})
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }})
     .then(function (stream) {
       video.srcObject = stream;
     })
