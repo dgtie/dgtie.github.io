@@ -26,6 +26,7 @@
   <video autoplay="true" id="video" ></video>
   <canvas id="canvas" ></canvas>
   <button id="snap" style='width:900px;height:100px'>Capture</button>
+  <button type="button" onclick="saveImage()" style='width:900px;height:100px'>save image</button>
 
   <h2 id="msg">This is a Heading h2</h2>
   <div class="touch" value='1'></div>
@@ -78,10 +79,14 @@
       let src = cv.imread(cvs);
       let dst = new cv.Mat();
       cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY, 0);
-      cv.imshow('canvas', dst);
+      cv.imshow('canvas', src);
       src.delete(); dst.delete();
   });
 
+  function saveImage() {
+    var canvas = document.getElementById("canvas");
+    document.location.href = canvas.toDataURL("image/png").replace("image/png","image/octet-stream");
+  }
 
   </script>
 </body>
