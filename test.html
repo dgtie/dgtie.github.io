@@ -23,23 +23,9 @@
   <h1>DGTIE</h1>
   <hr>
   <video autoplay="true" id="video" ></video>
-  <button id="snap" style='font-size:40px;width:900px;height:100px'>Capture</button>
-  <!-- Webcam video snapshot -->
   <canvas id="canvas" ></canvas>
-  <br/>
-  <img src="magzinger.png" id="banner"></img>
-  <script>
-    let img = document.querySelector('#banner');
-    img.addEventListener('mousedown', (e) => {
-      document.querySelector('#msg').innerHTML = "mousedown";
-    });
-    img.addEventListener('touchmove', (e) => {
-      document.querySelector('#msg').innerHTML = "touchmove";
-    });
-    img.addEventListener('mouseup', (e) => {
-      document.querySelector('#msg').innerHTML = "mouseup";
-    });
-  </script>
+  <button id="snap" style='font-size:40px;width:900px;height:100px'>Capture</button>
+
   <h2 id="msg">This is a Heading h2</h2>
   <div class="touch" value='1'></div>
   <div class="touch" value=2></div>
@@ -70,23 +56,33 @@
     const snap = document.getElementById("snap");
 
 
-if (navigator.mediaDevices.getUserMedia) {
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }})
-    .then(function (stream) {
-      video.srcObject = stream;
-    })
-    .catch(function (err0r) {
-      console.log("Something went wrong!");
-    });
-}
+  if (navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }})
+      .then(function (stream) {
+        video.srcObject = stream;
+      })
+      .catch(function (err0r) {
+        console.log("Something went wrong!");
+      });
+  }
 
-// Draw image
-var context = canvas.getContext('2d');
-snap.addEventListener("click", function() {
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0);
-});
+  // Draw image
+  var context = canvas.getContext('2d');
+  snap.addEventListener("click", function() {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0);
+      var pixel = context.getImageData(0,0,canvas.width,canvas.height);
+      var data = pixel.data;
+      for (var i = 0; i < data.length; i += 4) {
+        var avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        avg = avg > 100 ? 255 : 0;
+        data[i] = avg;
+        data[i + 1] = avg;
+        data[i + 2] = avg;
+      }
+      context.putImageData(pixel, 0, 0);
+  });
 
 
   </script>
