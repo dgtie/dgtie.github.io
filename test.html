@@ -59,7 +59,15 @@
     const snap = document.getElementById("snap");
     
     video.onresize = function() {
-      
+      let roi = document.querySelector("#roi");
+      roi.width = video.videoWidth;
+      roi.height = video.videoHeight;
+      let ctx = roi.getContext('2d');
+      ctx.beginPath();
+      ctx.lineWidth = "5";
+      ctx.strokeStyle = "red";
+      ctx.rect(roi.width/4, roi.height/2-25, roi.width/2, 50);
+      ctx.stroke();
     }
 
   if (navigator.mediaDevices.getUserMedia) {
