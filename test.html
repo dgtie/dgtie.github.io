@@ -23,6 +23,7 @@
 <body>
   <h1>DGTIE</h1>
   <hr>
+  <canvas id="roi" style="position:absolute"></canvas>
   <video autoplay="true" id="video" ></video>
   <canvas id="canvas" ></canvas>
   <button id="snap" style='width:900px;height:100px'>Capture</button>
@@ -56,7 +57,10 @@
     var video = document.querySelector("#video");
     const canvas = document.getElementById('canvas');
     const snap = document.getElementById("snap");
-
+    
+    video.onresize = function() {
+      
+    }
 
   if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }})
