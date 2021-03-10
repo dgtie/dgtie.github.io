@@ -78,7 +78,8 @@
     const snap = document.getElementById("snap");
     
     video.onresize = function() {
-      snap.style.bottom = ((video.offsetHeight - 100) / 2 ) +'px';
+      let shadow = document.querySelector("#shadow");
+      shadow.style.height = video.offsetHeight + "px";
     }
 
   if (navigator.mediaDevices.getUserMedia) {
