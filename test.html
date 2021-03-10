@@ -16,6 +16,16 @@
       display: inline-block;
       touch-action: none;
     }
+    #snap {
+      background-color: transparent;
+      border-color: red;
+      border-width: 5px;
+      position: absolute;
+      z-index: 1;
+      left: 150px;
+      width: 660px;
+      height: 100px;
+    }
   </style>
   <script src="opencv.js"></script>
 <head>
@@ -23,10 +33,9 @@
 <body>
   <h1>DGTIE</h1>
   <hr>
-  <canvas id="roi" style="position:absolute"></canvas>
+  <button id="snap"></button>
   <video autoplay="true" id="video" width="100%"></video>
   <canvas id="canvas" ></canvas>
-  <button id="snap" style='width:900px;height:100px'>Capture</button>
   <button type="button" onclick="saveImage()" style='width:900px;height:100px'>save image</button>
 
   <h2 id="msg">This is a Heading h2</h2>
@@ -59,15 +68,7 @@
     const snap = document.getElementById("snap");
     
     video.onresize = function() {
-      let roi = document.querySelector("#roi");
-      roi.width = video.offsetWidth;
-      roi.height = video.offsetHeight;
-      let ctx = roi.getContext('2d');
-      ctx.beginPath();
-      ctx.lineWidth = "5";
-      ctx.strokeStyle = "red";
-      ctx.rect(roi.width*0.2, roi.height/2-100, roi.width*0.6, 200);
-      ctx.stroke();
+      snap.style.bottom = ((video.offsetHeight - 100) / 2 ) +'px';
     }
 
   if (navigator.mediaDevices.getUserMedia) {
