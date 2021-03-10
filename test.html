@@ -16,13 +16,23 @@
       display: inline-block;
       touch-action: none;
     }
+    #shadow {
+      position: absolute;
+      z-index: 1;
+      width: 960px;
+    }
+    .center {
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
     #snap {
       background-color: transparent;
       border-color: red;
       border-width: 5px;
-      position: absolute;
-      z-index: 1;
-      left: 150px;
       width: 660px;
       height: 100px;
     }
@@ -33,7 +43,7 @@
 <body>
   <h1>DGTIE</h1>
   <hr>
-  <button id="snap"></button>
+  <div id="shadow"><div class="center"><button id="snap"></button></div></div>
   <video autoplay="true" id="video" width="100%"></video>
   <canvas id="canvas" ></canvas>
   <button type="button" onclick="saveImage()" style='width:900px;height:100px'>save image</button>
