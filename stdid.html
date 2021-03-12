@@ -46,19 +46,27 @@
 <script>
   var video = document.querySelector('#video');
   function ocr() {
-    let canvas = document.querySelector('#canvas');
-    let ctx = canvas.getContext('2d');
+    let cvs = document.createElement("canvas");
+    let ctx = cvs.getContext('2d');
+    cvs.width = video.videoWidth;
+    cvs.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+    let src = cv.imread(cvs);
     let x = (video.offsetWidth - 600) / 2;
     let y = (video.offsetHeight - 100) / 2;
-    canvas.width = (600 * video.videoWidth) / video.offsetWidth;
-    canvas.height = (100 * video.videoWidth) / video.offsetWidth;
+    let w = (600 * video.videoWidth) / video.offsetWidth;
+    let h = (100 * video.videoWidth) / video.offsetWidth;
     x = (x * video.videoWidth) / video.offsetWidth;
     y = (y * video.videoWidth) / video.offsetWidth;
-    ctx.drawImage(video, -x, -y);
+    let rect = new cv.Rect(x, y, w, h);
+    src = src.roi(rect);
+    cv.imshow('canvas', src);
+    let canvas = document.querySelector('#canvas');
     Tesseract.recognize(canvas).then(function(result){
       console.log(result.text);
       alert(result.text);
     });
+    src.delete();
   }
   video.onresize = function() {
     let shadow = document.querySelector('#shadow');
