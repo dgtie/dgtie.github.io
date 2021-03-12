@@ -30,7 +30,7 @@
     color: red;
     border-color: red;
     border-width: 5px;
-    width: 660px;
+    width: 700px;
     height: 100px;
   }
 </style>
@@ -38,10 +38,28 @@
 <body>
   <h1>STUDENT ID</h>
   <hr/>
-  <div id="shadow"><div class="center"><button id="aim">+</button></div></div>
+  <div id="shadow"><div class="center">
+    <button id="aim" onclick="ocr()">+</button>
+  </div></div>
   <video autoplay="true" id="video" width="100%"></video>
+  <canvas id="canvas"></canvas>
 <script>
   var video = document.querySelector('#video');
+  function ocr() {
+    let canvas = document.querySelector('#canvas');
+    let ctx = canvas.getContext('2d');
+    let x = (video.offsetWidth - 600) / 2;
+    let y = (video.offsetHeight - 100) / 2;
+    canvas.width = (600 * video.videoWidth) / video.offsetWidth;
+    canvas.height = (100 * video.videoWidth) / video.offsetWidth;
+    x = (x * video.videoWidth) / video.offsetWidth;
+    y = (y * video.videoWidth) / video.offsetWidth;
+    ctx.drawImage(video, -x, -y);
+    Tesseract.recognize(canvas).then(function(result){
+      console.log(result.text);
+      alert(result.text);
+    });
+  }
   video.onresize = function() {
     let shadow = document.querySelector('#shadow');
     shadow.style.width = video.offsetWidth + "px";
