@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student ID</title>
+<meta charset="UTF-8" />
+<script src="https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js"></script>
+<script src="opencv.js"></script>
+<style>
+  body { background-color: powderblue; }
+  h1 { font-size: 80px; }
+  h2 { font-size: 70px; }
+  h3 { font-size: 60px; }
+  h4 { font-size: 50px; }
+  h5, button { font-size: 40px; }
+  h6, p, pre { font-size: 30px; }
+  #shadow {
+    position: absolute;
+    z-index: 1;
+  }
+  .center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+  #aim {
+    background-color: transparent;
+    color: red;
+    border-color: red;
+    border-width: 5px;
+    width: 660px;
+    height: 100px;
+  }
+</style>
+</head>
+<body>
+  <h1>STUDENT ID</h>
+  <hr/>
+  <div id="shadow"><div class="center"><button id="aim">+</button></div></div>
+  <video autoplay="true" id="video" width="100%"></video>
+<script>
+  var video = document.querySelector('#video');
+  video.onresize = function() {
+    let shadow = document.querySelector('#shadow');
+    shadow.style.width = video.offsetWidth + "px";
+    shadow.style.height = video.offsetHeight + "px";
+  }
+  if (navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }})
+      .then(function (stream) {
+        video.srcObject = stream;
+      })
+      .catch(function (err0r) {
+        console.log("Something went wrong!");
+      });
+  }
+</script>
+</body>
+</html>
