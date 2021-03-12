@@ -60,11 +60,13 @@
     y = (y * video.videoWidth) / video.offsetWidth;
     let rect = new cv.Rect(x, y, w, h);
     src = src.roi(rect);
+    cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
+    cv.threshold(src, src, 100, 255, cv.THRESH_BINARY);
     cv.imshow('canvas', src);
     let canvas = document.querySelector('#canvas');
     Tesseract.recognize(canvas).then(function(result){
       console.log(result.text);
-      alert(result.text);
+      confirm(result.text);
     });
     src.delete();
   }
