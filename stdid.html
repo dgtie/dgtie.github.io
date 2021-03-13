@@ -64,7 +64,7 @@
 //    cv.threshold(src, src, 100, 255, cv.THRESH_BINARY);
     cv.imshow('canvas', src);
     let canvas = document.querySelector('#canvas');
-    Tesseract.recognize(canvas, 'eng', {tessedit_char_whitelist: '0123456789'}).then(function(result){
+    Tesseract.recognize(canvas, 'eng').then(function(result){
       console.log(result.text);
       confirm(result.text);
     });
