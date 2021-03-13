@@ -3,7 +3,7 @@
 <head>
 <title>Student ID</title>
 <meta charset="UTF-8" />
-<script src="https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js"></script>
+<script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>
 <script src="opencv.js"></script>
 <style>
   body { background-color: powderblue; }
@@ -64,7 +64,7 @@
     cv.threshold(src, src, 100, 255, cv.THRESH_BINARY);
     cv.imshow('canvas', src);
     let canvas = document.querySelector('#canvas');
-    Tesseract.recognize(canvas, 'equ', {tessedit_char_whitelist: '0123456789'}).then(function(result){
+    Tesseract.recognize(canvas, 'eng', {tessedit_char_whitelist: '0123456789'}).then(function(result){
       console.log(result.text);
       confirm(result.text);
     });
